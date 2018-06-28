@@ -11,6 +11,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
+import android.widget.Button
+import android.widget.Toast
+
 
 class MainActivity : Activity() {
     private val TAG = "MainActivity"
@@ -27,10 +30,11 @@ class MainActivity : Activity() {
 
         firebaseStorage = FirebaseStorage.getInstance()
 
-        var newest = FirebaseDatabase.getInstance().reference.child("newest")
+        val newest = FirebaseDatabase.getInstance().reference.child("newest")
+        val state = FirebaseDatabase.getInstance().reference.child("state")
+
         val imagesListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-
                 val imageUrl = dataSnapshot.child("url").value.toString()
                 val imageRef = firebaseStorage.getReferenceFromUrl(imageUrl)
 
@@ -46,6 +50,23 @@ class MainActivity : Activity() {
             }
         }
         newest.addValueEventListener(imagesListener)
+
+        val buttonStart = findViewById<Button>(R.id.buttonStart)
+        val buttonStop = findViewById<Button>(R.id.buttonStop)
+
+        buttonStart.setOnClickListener{
+            val update = HashMap<String,Any>()
+            update["state"] = "started"
+            state.updateChildren(update)
+            Toast.makeText(this@MainActivity, "Taking photos!", Toast.LENGTH_SHORT).show()
+        }
+
+        buttonStop.setOnClickListener {
+            val update = HashMap<String,Any>()
+            update["state"] = "stopped"
+            state.updateChildren(update)
+            Toast.makeText(this@MainActivity, "Not taking photos anymore.", Toast.LENGTH_SHORT).show()
+        }
     }
 
     /*
