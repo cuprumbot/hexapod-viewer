@@ -29,7 +29,7 @@ import java.io.FileOutputStream
 import java.io.File
 
 const val TAG = "MainActivity"
-const val USING_FIREBASE = true
+const val USING_FIREBASE = false
 
 class MainActivity : Activity() {
     private lateinit var imageView: ImageView
@@ -109,57 +109,96 @@ class MainActivity : Activity() {
             val update = HashMap<String, Any>()
             update["state"] = "started"
             cameraState.updateChildren(update)
-            //Toast.makeText(this@MainActivity, "Taking photos!", Toast.LENGTH_SHORT).show()
         }
 
         buttonStop.setOnClickListener {
             val update = HashMap<String, Any>()
             update["state"] = "stopped"
             cameraState.updateChildren(update)
-            //Toast.makeText(this@MainActivity, "Not taking photos anymore.", Toast.LENGTH_SHORT).show()
         }
 
         buttonForward.setOnClickListener {
-            val update = HashMap<String, Any>()
-            update["state"] = "forward"
-            moveState.updateChildren(update)
+            if (USING_FIREBASE) {
+                val update = HashMap<String, Any>()
+                update["state"] = "forward"
+                moveState.updateChildren(update)
+            } else {
+                //socket = DatagramSocket()
+                val message = "forward"
+                val buffer = message.toByteArray()
+                val packet = DatagramPacket(buffer, buffer.size, address, port)
+                socket.send(packet)
+            }
         }
 
         buttonLeft.setOnClickListener {
-            val update = HashMap<String, Any>()
-            update["state"] = "left"
-            moveState.updateChildren(update)
+            if (USING_FIREBASE) {
+                val update = HashMap<String, Any>()
+                update["state"] = "left"
+                moveState.updateChildren(update)
+            } else {
+                // socket = DatagramSocket()
+                val message = "left"
+                val buffer = message.toByteArray()
+                val packet = DatagramPacket(buffer, buffer.size, address, port)
+                socket.send(packet)
+
+                Log.w(TAG, "Sending packet: ${packet.data}")
+            }
         }
 
         buttonRight.setOnClickListener {
-            val update = HashMap<String, Any>()
-            update["state"] = "right"
-            moveState.updateChildren(update)
+            if (USING_FIREBASE) {
+                val update = HashMap<String, Any>()
+                update["state"] = "right"
+                moveState.updateChildren(update)
+            } else {
+                // socket = DatagramSocket()
+                val message = "right"
+                val buffer = message.toByteArray()
+                val packet = DatagramPacket(buffer, buffer.size, address, port)
+                socket.send(packet)
+
+                Log.w(TAG, "Sending packet: ${packet.data}")
+
+            }
         }
 
         buttonStand.setOnClickListener {
-            val update = HashMap<String, Any>()
-            update["state"] = "stand"
-            moveState.updateChildren(update)
+            if (USING_FIREBASE) {
+                val update = HashMap<String, Any>()
+                update["state"] = "stand"
+                moveState.updateChildren(update)
+            } else {
+                // socket = DatagramSocket()
+                val message = "stand"
+                val buffer = message.toByteArray()
+                val packet = DatagramPacket(buffer, buffer.size, address, port)
+                socket.send(packet)
+            }
         }
 
         buttonStore.setOnClickListener {
-            val update = HashMap<String, Any>()
-            update["state"] = "store"
-            moveState.updateChildren(update)
+            if (USING_FIREBASE) {
+                val update = HashMap<String, Any>()
+                update["state"] = "store"
+                moveState.updateChildren(update)
+            } else {
+                // socket = DatagramSocket()
+                val message = "store"
+                val buffer = message.toByteArray()
+                val packet = DatagramPacket(buffer, buffer.size, address, port)
+                socket.send(packet)
+            }
         }
 
-        //val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-        //StrictMode.setThreadPolicy(policy)
+        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
 
         val path = Environment.getExternalStorageDirectory()
         val myFile = File(path, "myFile.png")
         myFile.createNewFile()
         Log.w(TAG, "Path: " + myFile.absolutePath)
-
-
-
-
 
         /**
                 anko doAsync and uiThread
@@ -181,7 +220,7 @@ class MainActivity : Activity() {
             var recPacket = DatagramPacket(recBuffer, recBuffer.size)
 
             while (true) {
-                Log.v("loop", "Running...")
+                //Log.v("loop", "Running...")
 
                 // Receive a packet
                 socket.receive(recPacket)
@@ -201,7 +240,7 @@ class MainActivity : Activity() {
 
                 hideLeft()
                 uiThread {
-                    toast("Starting...")
+                    //toast("Starting...")
                 }
                 hideRight()
 
